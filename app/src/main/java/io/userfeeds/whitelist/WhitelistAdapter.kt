@@ -6,9 +6,9 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 
-class ContextsAdapter(private val contexts: List<String>, private val onContextSelect: (String) -> Unit) : RecyclerView.Adapter<ContextsAdapter.Holder>() {
+class WhitelistAdapter(private val whitelist: List<WhitelistedRankingItem>) : RecyclerView.Adapter<WhitelistAdapter.Holder>() {
 
-    override fun getItemCount() = contexts.size
+    override fun getItemCount() = whitelist.size
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): Holder {
         val inflater = LayoutInflater.from(parent.context)
@@ -18,8 +18,7 @@ class ContextsAdapter(private val contexts: List<String>, private val onContextS
 
     override fun onBindViewHolder(holder: Holder, position: Int) {
         val contextView = holder.itemView.findViewById(android.R.id.text1) as TextView
-        contextView.text = contexts[position]
-        holder.itemView.setOnClickListener { onContextSelect(contexts[position]) }
+        contextView.text = whitelist[position].target
     }
 
     class Holder(itemView: View) : RecyclerView.ViewHolder(itemView)

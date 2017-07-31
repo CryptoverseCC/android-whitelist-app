@@ -19,6 +19,10 @@ class MainActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
-        contextsView.adapter = ContextsAdapter(ContextsRepository(this).contexts)
+        contextsView.adapter = ContextsAdapter(ContextsRepository(this).contexts, this::onContextSelect)
+    }
+
+    private fun onContextSelect(context: String) {
+        WhitelistActivity.start(this, context)
     }
 }
