@@ -9,5 +9,12 @@ data class WhitelistedRankingItem(
         val total: BigDecimal,
         val title: String?,
         val summary: String?,
-        val whitelisted: Boolean
+        var state: State
 )
+
+enum class State {
+
+    unknown,
+    whitelisted,
+    blacklisted
+}

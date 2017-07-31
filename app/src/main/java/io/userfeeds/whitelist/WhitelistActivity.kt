@@ -61,7 +61,7 @@ class WhitelistActivity : AppCompatActivity() {
                     total = it.total!!,
                     title = it.title,
                     summary = it.summary,
-                    whitelisted = it.id!! in whitelistedIds)
+                    state = if (it.id!! in whitelistedIds) State.whitelisted else State.unknown)
         }
     }
 
