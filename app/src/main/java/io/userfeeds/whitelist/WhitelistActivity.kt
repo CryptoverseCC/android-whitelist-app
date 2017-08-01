@@ -64,7 +64,7 @@ class WhitelistActivity : AppCompatActivity() {
                 UserfeedsService.get().getRanking(userfeedId, Algorithm("links", ""), whitelist),
                 BiFunction(this::zipToSingleList))
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(this::onSuccess, this::onError)
+                .subscribe(this::onSuccess, this::onErrorLoadRanking)
     }
 
     private fun zipToSingleList(all: List<RankingItem>, whitelisted: List<RankingItem>): List<WhitelistedRankingItem> {
@@ -118,7 +118,7 @@ class WhitelistActivity : AppCompatActivity() {
     private fun sendClaim(itemId: String, signature: Signature) {
         UserfeedsService.get().putClaim(createClaimWrapper(itemId), signature)
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(this::onSuccess, this::onError)
+                .subscribe(this::onSuccess, this::onErrorLoadRanking)
     }
 
     private fun onSuccess() {
@@ -126,7 +126,7 @@ class WhitelistActivity : AppCompatActivity() {
         Log.i("WhitelistActivity", "share success")
     }
 
-    private fun onError2(error: Throwable) {
+    private fun onErrorWhitelist(error: Throwable) {
         Toast.makeText(this, "Error while whitelisting!", Toast.LENGTH_SHORT).show()
         Log.e("WhitelistActivity", "error", error)
     }
@@ -140,7 +140,7 @@ class WhitelistActivity : AppCompatActivity() {
                 .apply()
     }
 
-    private fun onError(error: Throwable) {
+    private fun onErrorLoadRanking(error: Throwable) {
         Toast.makeText(this, "Error loading ranking!", Toast.LENGTH_SHORT).show()
         Log.e("TAG", "error", error)
     }

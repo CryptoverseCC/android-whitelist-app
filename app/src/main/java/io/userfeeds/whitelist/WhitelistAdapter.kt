@@ -64,7 +64,11 @@ class WhitelistAdapter(
 
     private fun blacklist(position: Int, item: WhitelistedRankingItem) {
         item.state = State.blacklisted
-        notifyItemChanged(position)
+        if (showBlacklisted) {
+            notifyItemChanged(position)
+        } else {
+            notifyItemRemoved(position)
+        }
         onBlacklist(item)
     }
 
