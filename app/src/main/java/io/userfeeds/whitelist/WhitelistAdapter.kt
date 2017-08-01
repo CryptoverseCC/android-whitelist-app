@@ -7,7 +7,10 @@ import android.view.ViewGroup
 import android.widget.TextView
 import java.math.BigDecimal
 
-class WhitelistAdapter(private val whitelist: List<WhitelistedRankingItem>) : RecyclerView.Adapter<WhitelistAdapter.Holder>() {
+class WhitelistAdapter(
+        private val whitelist: List<WhitelistedRankingItem>,
+        private val onWhitelist: (WhitelistedRankingItem) -> Unit,
+        private val onBlacklist: (WhitelistedRankingItem) -> Unit) : RecyclerView.Adapter<WhitelistAdapter.Holder>() {
 
     override fun getItemCount() = whitelist.size
 
@@ -39,11 +42,13 @@ class WhitelistAdapter(private val whitelist: List<WhitelistedRankingItem>) : Re
     private fun whitelist(position: Int, item: WhitelistedRankingItem) {
         item.state = State.whitelisted
         notifyItemChanged(position)
+        onWhitelist(item)
     }
 
     private fun blacklist(position: Int, item: WhitelistedRankingItem) {
         item.state = State.blacklisted
         notifyItemChanged(position)
+        onBlacklist(item)
     }
 
     class Holder(itemView: View) : RecyclerView.ViewHolder(itemView)
