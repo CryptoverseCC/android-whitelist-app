@@ -28,8 +28,20 @@ class WhitelistAdapter(
         targetView.text = item.target
         val totalView = holder.itemView.findViewById(R.id.totalView) as TextView
         totalView.text = item.total.toPlainString()
-        holder.itemView.findViewById(R.id.whitelistButton).setOnClickListener { whitelist(position, item) }
-        holder.itemView.findViewById(R.id.blacklistButton).setOnClickListener { blacklist(position, item) }
+        val whitelistButton = holder.itemView.findViewById(R.id.whitelistButton)
+        whitelistButton.setOnClickListener { whitelist(position, item) }
+        when (item.state) {
+            State.unknown -> whitelistButton.visibility = View.VISIBLE
+            State.whitelisted -> whitelistButton.visibility = View.INVISIBLE
+            State.blacklisted -> whitelistButton.visibility = View.VISIBLE
+        }
+        val blacklistButton = holder.itemView.findViewById(R.id.blacklistButton)
+        blacklistButton.setOnClickListener { blacklist(position, item) }
+        when (item.state) {
+            State.unknown -> blacklistButton.visibility = View.VISIBLE
+            State.whitelisted -> blacklistButton.visibility = View.INVISIBLE
+            State.blacklisted -> blacklistButton.visibility = View.INVISIBLE
+        }
         val color = when {
             item.state == State.unknown && item.total > BigDecimal.ZERO -> 0xFFCCCCCC.toInt()
             item.state == State.whitelisted -> 0xFFFFFFFF.toInt()
