@@ -16,7 +16,9 @@ class WhitelistAdapter(
 
     var showBlacklisted by Delegates.observable(showBlacklisted) { _, _, _ -> notifyDataSetChanged() }
 
-    override fun getItemCount() = if (showBlacklisted) whitelist.size else whitelist.count { it.state != State.blacklisted }
+    private val filteredWhitelist get() = if (showBlacklisted) whitelist else whitelist.filter { it.state != State.blacklisted }
+
+    override fun getItemCount() = filteredWhitelist.size
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): Holder {
         val inflater = LayoutInflater.from(parent.context)
@@ -25,8 +27,7 @@ class WhitelistAdapter(
     }
 
     override fun onBindViewHolder(holder: Holder, position: Int) {
-        val items = if (showBlacklisted) whitelist else whitelist.filter { it.state != State.blacklisted }
-        val item = items[position]
+        val item = filteredWhitelist[position]
         val titleView = holder.itemView.findViewById(R.id.titleView) as TextView
         titleView.text = item.title
         val targetView = holder.itemView.findViewById(R.id.targetView) as TextView
@@ -34,14 +35,14 @@ class WhitelistAdapter(
         val totalView = holder.itemView.findViewById(R.id.totalView) as TextView
         totalView.text = item.total.toPlainString()
         val whitelistButton = holder.itemView.findViewById(R.id.whitelistButton)
-        whitelistButton.setOnClickListener { whitelist(position, item) }
+        whitelistButton.setOnClickListener { whitelist(item) }
         when (item.state) {
             State.unknown -> whitelistButton.visibility = View.VISIBLE
             State.whitelisted -> whitelistButton.visibility = View.INVISIBLE
             State.blacklisted -> whitelistButton.visibility = View.VISIBLE
         }
         val blacklistButton = holder.itemView.findViewById(R.id.blacklistButton)
-        blacklistButton.setOnClickListener { blacklist(position, item) }
+        blacklistButton.setOnClickListener { blacklist(item) }
         when (item.state) {
             State.unknown -> blacklistButton.visibility = View.VISIBLE
             State.whitelisted -> blacklistButton.visibility = View.INVISIBLE
@@ -56,13 +57,15 @@ class WhitelistAdapter(
         holder.itemView.setBackgroundColor(color)
     }
 
-    private fun whitelist(position: Int, item: WhitelistedRankingItem) {
+    private fun whitelist(item: WhitelistedRankingItem) {
+        val position = filteredWhitelist.indexOf(item)
         item.state = State.whitelisted
         notifyItemChanged(position)
         onWhitelist(item)
     }
 
-    private fun blacklist(position: Int, item: WhitelistedRankingItem) {
+    private fun blacklist(item: WhitelistedRankingItem) {
+        val position = filteredWhitelist.indexOf(item)
         item.state = State.blacklisted
         if (showBlacklisted) {
             notifyItemChanged(position)
