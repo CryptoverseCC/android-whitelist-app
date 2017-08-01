@@ -30,6 +30,12 @@ class WhitelistActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.whitelist_activity)
         requestPublicKeyFromIdentity()
+        showBlacklisted.setOnCheckedChangeListener { buttonView, isChecked ->
+            val adapter = whitelistedLinksView.adapter
+            if (adapter is WhitelistAdapter) {
+                adapter.showBlacklisted = isChecked
+            }
+        }
     }
 
     private fun requestPublicKeyFromIdentity() {
@@ -84,7 +90,7 @@ class WhitelistActivity : AppCompatActivity() {
 
     private fun onSuccess(whitelist: List<WhitelistedRankingItem>) {
         whitelistedLinksView.layoutManager = LinearLayoutManager(this)
-        whitelistedLinksView.adapter = WhitelistAdapter(whitelist, this::onWhitelist, this::onBlacklist)
+        whitelistedLinksView.adapter = WhitelistAdapter(whitelist, showBlacklisted.isChecked, this::onWhitelist, this::onBlacklist)
     }
 
     private fun onWhitelist(item: WhitelistedRankingItem) {

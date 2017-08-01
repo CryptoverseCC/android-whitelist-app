@@ -6,13 +6,17 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import java.math.BigDecimal
+import kotlin.properties.Delegates
 
 class WhitelistAdapter(
         private val whitelist: List<WhitelistedRankingItem>,
+        showBlacklisted: Boolean,
         private val onWhitelist: (WhitelistedRankingItem) -> Unit,
         private val onBlacklist: (WhitelistedRankingItem) -> Unit) : RecyclerView.Adapter<WhitelistAdapter.Holder>() {
 
-    override fun getItemCount() = whitelist.size
+    var showBlacklisted by Delegates.observable(showBlacklisted) { _, _, _ -> notifyDataSetChanged() }
+
+    override fun getItemCount() = if (showBlacklisted) whitelist.size else whitelist.count { it.state != State.blacklisted }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): Holder {
         val inflater = LayoutInflater.from(parent.context)
@@ -21,7 +25,8 @@ class WhitelistAdapter(
     }
 
     override fun onBindViewHolder(holder: Holder, position: Int) {
-        val item = whitelist[position]
+        val items = if (showBlacklisted) whitelist else whitelist.filter { it.state != State.blacklisted }
+        val item = items[position]
         val titleView = holder.itemView.findViewById(R.id.titleView) as TextView
         titleView.text = item.title
         val targetView = holder.itemView.findViewById(R.id.targetView) as TextView
